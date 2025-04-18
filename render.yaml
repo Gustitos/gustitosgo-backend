@@ -1,0 +1,13 @@
+
+services:
+  - type: web
+    name: gustitosgo-reporting
+    env: docker
+    plan: free
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /docs
+    autoDeploy: true
+    envVars:
+      - key: GOOGLE_APPLICATION_CREDENTIALS_JSON
+        sync: false
