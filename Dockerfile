@@ -1,21 +1,28 @@
 
-FROM madnight/docker-alpine-wkhtmltopdf:0.12.6-alpine
+FROM python:3.10-slim
 
-# Install Python and pip
-RUN apk add --no-cache python3 py3-pip && pip3 install --upgrade pip
+# Install system dependencies and wkhtmltopdf
+RUN apt-get update && apt-get install -y \
+    wget \
+    gnupg2 \
+    build-essential \
+    libxrender1 \
+    libfontconfig1 \
+    libxext6 \
+    xz-utils && \
+    wget http://ftp.us.debian.org/debian/pool/main/o/openssl1.1/libssl1.1_1.1.1n-0+deb10u3_amd64.deb && \
+    dpkg -i libssl1.1_1.1.1n-0+deb10u3_amd64.deb && \
+    wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.buster_amd64.deb && \
+    dpkg -i wkhtmltox_0.12.6-1.buster_amd64.deb && \
+    rm -rf /var/lib/apt/lists/*
 
-# Set workdir
 WORKDIR /app
 
-# Install Python dependencies
 COPY requirements.txt .
-RUN pip3 install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy app source
 COPY . .
 
-# Expose port
 EXPOSE 10000
 
-# Run FastAPI app
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "10000"]
