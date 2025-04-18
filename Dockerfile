@@ -1,28 +1,23 @@
 
-FROM python:3.10-slim
+FROM ghcr.io/joseluisq/wkhtmltopdf:0.12.6-1
 
-RUN apt-get update && apt-get install -y \
-    wget \
-    gnupg2 \
-    build-essential \
-    xz-utils \
-    libxrender1 \
-    libfontconfig1 \
-    libxext6 \
-    curl && \
-    wget http://security.debian.org/debian-security/pool/updates/main/o/openssl1.1/libssl1.1_1.1.1n-0+deb10u4_amd64.deb && \
-    dpkg -i libssl1.1_1.1.1n-0+deb10u4_amd64.deb && \
-    wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.buster_amd64.deb && \
-    dpkg -i wkhtmltox_0.12.6-1.buster_amd64.deb && \
-    rm -rf /var/lib/apt/lists/*
+# Install Python and required packages
+RUN apt-get update && \
+    apt-get install -y python3 python3-pip && \
+    pip3 install --upgrade pip
 
+# Set working directory
 WORKDIR /app
 
+# Copy and install requirements
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip3 install --no-cache-dir -r requirements.txt
 
+# Copy app files
 COPY . .
 
+# Expose FastAPI port
 EXPOSE 10000
 
+# Start FastAPI app
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "10000"]
