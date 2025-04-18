@@ -1,23 +1,21 @@
 
-FROM ghcr.io/joseluisq/wkhtmltopdf:0.12.6-1
+FROM madnight/docker-alpine-wkhtmltopdf:0.12.6-alpine
 
-# Install Python and required packages
-RUN apt-get update && \
-    apt-get install -y python3 python3-pip && \
-    pip3 install --upgrade pip
+# Install Python and pip
+RUN apk add --no-cache python3 py3-pip && pip3 install --upgrade pip
 
-# Set working directory
+# Set workdir
 WORKDIR /app
 
-# Copy and install requirements
+# Install Python dependencies
 COPY requirements.txt .
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-# Copy app files
+# Copy app source
 COPY . .
 
-# Expose FastAPI port
+# Expose port
 EXPOSE 10000
 
-# Start FastAPI app
+# Run FastAPI app
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "10000"]
