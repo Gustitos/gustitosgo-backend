@@ -2,19 +2,22 @@ FROM ubuntu:20.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install system libraries and wkhtmltopdf
+# Install system libraries required for wkhtmltopdf and Python
 RUN apt-get update && apt-get install -y \
     wget \
-    gnupg2 \
     xz-utils \
     build-essential \
     libxrender1 \
     libxext6 \
     libfontconfig1 \
-    wkhtmltopdf \
     python3 \
     python3-pip && \
     rm -rf /var/lib/apt/lists/*
+
+# Install wkhtmltopdf manually (precompiled version avoids dependency issues)
+RUN wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.6/wkhtmltox_0.12.6-1.buster_amd64.deb && \
+    apt install -y ./wkhtmltox_0.12.6-1.buster_amd64.deb && \
+    rm wkhtmltox_0.12.6-1.buster_amd64.deb
 
 WORKDIR /app
 
