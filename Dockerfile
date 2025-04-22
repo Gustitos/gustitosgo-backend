@@ -1,28 +1,21 @@
-FROM python:3.10-slim
+# ✅ Use image that already includes wkhtmltopdf
+FROM ghcr.io/puppeteer/wkhtmltopdf:latest
 
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies for wkhtmltopdf
+# Install Python manually
 RUN apt-get update && apt-get install -y \
-    wget \
-    xz-utils \
-    libxrender1 \
-    libxext6 \
-    libfontconfig1 && \
+    python3 \
+    python3-pip && \
     rm -rf /var/lib/apt/lists/*
 
-# Install wkhtmltopdf manually from stable precompiled .deb
-RUN wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.buster_amd64.deb && \
-    apt install -y ./wkhtmltox_0.12.6-1.buster_amd64.deb && \
-    rm wkhtmltox_0.12.6-1.buster_amd64.deb
-
-# Copy code and install Python packages
+# Copy code and install Python dependencies
 COPY . /app
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip3 install --no-cache-dir -r requirements.txt
 
 # Expose the FastAPI app port
 EXPOSE 10000
 
-# Start the FastAPI app from main.py
+# Start the app using uvicorn (assuming main.py is in root)
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "10000"]

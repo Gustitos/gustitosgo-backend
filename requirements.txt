@@ -1,13 +1,5 @@
-
 fastapi
 uvicorn
 pandas
-gspread
-oauth2client
-google-auth
-google-auth-oauthlib
-matplotlib
-plotly
-openpyxl
-pdfkit
 jinja2
+pyarrow
